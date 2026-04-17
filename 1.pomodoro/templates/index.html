@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポモドーロタイマー</title>
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        colors: {
+          transparent: "transparent",
+          current: "currentColor",
+          brand: {
+            DEFAULT: "#6C63FF",
+            light: "#9B94FF",
+            dark: "#4B44CC",
+          },
+          bg: {
+            DEFAULT: "#7B6FD1",
+          },
+          surface: {
+            DEFAULT: "#FFFFFF",
+            muted: "#F3F2FF",
+          },
+          text: {
+            DEFAULT: "#1A1A2E",
+            muted: "#7B7B9E",
+          },
+          state: {
+            success: "#4CAF50",
+            warning: "#FF9800",
+          },
+        },
+        extend: {
+          borderRadius: {
+            card: "1.5rem",
+            btn: "9999px",
+          },
+          boxShadow: {
+            card: "0 8px 32px rgba(108, 99, 255, 0.12)",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* SVG 円形プログレスリングのアニメーション用 */
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.35s ease;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-bg flex items-center justify-center px-4">
+
+  <div class="w-full max-w-sm flex flex-col gap-4">
+
+    <!-- メインカード -->
+    <div class="bg-surface rounded-card shadow-card px-6 pt-6 pb-8 text-center">
+
+      <!-- タイトル -->
+      <h1 class="text-text text-lg font-bold mb-1">ポモドーロタイマー</h1>
+
+      <!-- フェーズ名 -->
+      <p id="phase-label" class="text-text-muted text-sm mb-6">作業中</p>
+
+      <!-- 円形プログレスリング + 残り時間 -->
+      <div class="relative mx-auto w-48 h-48 mb-6">
+        <svg class="w-full h-full" viewBox="0 0 200 200">
+          <!-- 背景リング -->
+          <circle
+            cx="100" cy="100" r="85"
+            fill="none"
+            stroke="#E8E6F0"
+            stroke-width="12"
+          />
+          <!-- 進捗リング -->
+          <circle
+            id="progress-ring"
+            class="progress-ring-circle"
+            cx="100" cy="100" r="85"
+            fill="none"
+            stroke="#6C63FF"
+            stroke-width="12"
+            stroke-linecap="round"
+            stroke-dasharray="534.07"
+            stroke-dashoffset="0"
+          />
+        </svg>
+        <!-- 残り時間テキスト（中央に重ねる） -->
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span id="timer-display" class="text-text text-5xl font-bold tracking-wide">25:00</span>
+        </div>
+      </div>
+
+      <!-- ボタン群 -->
+      <div class="flex justify-center gap-4">
+        <button
+          id="btn-start"
+          class="bg-brand text-surface font-bold px-6 py-2 rounded-btn hover:bg-brand-dark transition-colors"
+        >
+          開始
+        </button>
+        <button
+          id="btn-reset"
+          class="bg-transparent text-brand font-bold px-6 py-2 rounded-btn border-2 border-brand hover:bg-surface-muted transition-colors"
+        >
+          リセット
+        </button>
+      </div>
+    </div>
+
+    <!-- 今日の進捗カード -->
+    <div class="bg-surface rounded-card shadow-card px-6 py-5">
+      <p class="text-text font-bold text-sm mb-3">今日の進捗</p>
+      <div class="flex justify-around">
+        <div class="text-center">
+          <p id="stat-count" class="text-brand text-2xl font-bold">0</p>
+          <p class="text-text-muted text-xs">完了</p>
+        </div>
+        <div class="text-center">
+          <p id="stat-time" class="text-brand text-2xl font-bold">0分</p>
+          <p class="text-text-muted text-xs">集中時間</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/timer-core.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/persistence.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/api-client.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/ui-binder.js') }}"></script>
+</body>
+</html>
