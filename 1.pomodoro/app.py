@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+import logging
 
 from backend.models.database import init_db
 from backend.services import session_service
 
 app = Flask(__name__)
+logger = logging.getLogger(__name__)
 
 with app.app_context():
     init_db()
@@ -43,8 +45,11 @@ def post_session():
 
     try:
         session_service.record_session(kind, started_at, ended_at, int(duration_sec))
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+    except ValueError:
+        return jsonify({"error": "Invalid input"}), 400
+    except Exception:
+        logger.exception("Failed to record session")
+        return jsonify({"error": "An internal error has occurred"}), 500
 
     return jsonify({"status": "ok"}), 201
 
@@ -56,4 +61,5 @@ def get_today_stats():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1")

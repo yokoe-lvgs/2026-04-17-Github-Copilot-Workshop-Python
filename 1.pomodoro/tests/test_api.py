@@ -52,12 +52,12 @@ class TestPostSession:
     def test_invalid_kind(self, client):
         resp = self._post(client, kind="invalid")
         assert resp.status_code == 400
-        assert "Invalid kind" in resp.get_json()["error"]
+        assert "Invalid input" in resp.get_json()["error"]
 
     def test_negative_duration(self, client):
         resp = self._post(client, duration_sec=-1)
         assert resp.status_code == 400
-        assert "non-negative" in resp.get_json()["error"]
+        assert "Invalid input" in resp.get_json()["error"]
 
 
 class TestGetTodayStats:
